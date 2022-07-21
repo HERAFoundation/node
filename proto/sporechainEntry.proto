@@ -3,7 +3,10 @@ package sporechain.sporechain;
 option go_package = "sporechain/x/sporechain/types";
 
 message SporechainEntry {
+    //the wallet address of the user creating the entry
     string userAddress = 1;
+    //the id number of the entry
     uint64 id = 2;
+    //refers to IPFS content
     uint64 contentHash = 3;
 }
