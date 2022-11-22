@@ -1,0 +1,24 @@
+syntax = "proto3";
+package sporechain.sporechain;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "sporechain/x/sporechain/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc CreateSporechainEntry(MsgCreateSporechainEntry) returns (MsgCreateSporechainEntryResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateSporechainEntry {
+  string creator = 1;
+  string userAddress = 2;
+  string contentHash = 3;
+  string time = 4;
+}
+
+message MsgCreateSporechainEntryResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message

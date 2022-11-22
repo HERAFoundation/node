@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "sporechain/testutil/keeper"
-	"sporechain/x/sporechain/keeper"
-	"sporechain/x/sporechain/types"
+    "sporechain/x/sporechain/types"
+    "sporechain/x/sporechain/keeper"
+    keepertest "sporechain/testutil/keeper"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
