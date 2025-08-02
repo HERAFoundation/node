@@ -1,3 +1,11 @@
+# Git clone stage
+FROM rust:1.87-slim AS source
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+ARG GIT_REPO=https://github.com/HERAFoundation/aip.git
+ARG GIT_BRANCH=main
+WORKDIR /source
+RUN git clone --branch ${GIT_BRANCH} --single-branch --depth 1 ${GIT_REPO} .
+
 # Build stage
 FROM rust:1.87-slim AS builder
 
@@ -10,21 +18,12 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy manifests first for better layer caching
-COPY Cargo.toml Cargo.lock build.rs ./
+# Copy source code from git clone stage
+COPY --from=source /source .
 
 ARG FEATURES=embed,postgres
-ARG TEMPLATES=./templates
-ARG STATIC=./static
 ARG GIT_HASH=0
 ENV GIT_HASH=$GIT_HASH
-
-# Copy actual source code and assets
-COPY src ./src
-COPY migrations ./migrations
-COPY ${TEMPLATES} ./templates
-COPY ${STATIC} ./static
-
 ENV HTTP_TEMPLATE_PATH=/app/templates/
 
 # Build the actual application with embed feature only
@@ -43,7 +42,6 @@ LABEL org.opencontainers.image.description="ATProtocol Identity Provider - OAuth
 LABEL org.opencontainers.image.version="0.1.0"
 LABEL org.opencontainers.image.authors="Graze Social"
 LABEL org.opencontainers.image.licenses="MIT"
-# Build time will be set during image build
 
 # Set working directory
 WORKDIR /app
@@ -59,7 +57,6 @@ COPY --from=builder /app/static ./static
 COPY --from=builder /app/migrations ./migrations
 # Copy sqlx binary for running migrations
 COPY --from=builder /app/.cargo/bin/sqlx /app/sqlx
-
 
 # Set default environment variables
 ENV HTTP_STATIC_PATH=/app/static
